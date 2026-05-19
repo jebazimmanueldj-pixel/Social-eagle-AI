@@ -1,0 +1,200 @@
+-- ============================================================================
+--  Seed data — realistic Indian / Bhutan banking sample
+--  Users + roles are seeded by DataInitializer.java (so passwords are bcrypted).
+-- ============================================================================
+
+/* -------------------- ROLES (codes only) ----------------------- */
+INSERT INTO sec_role (role_code, role_name, description) VALUES
+  ('AML_ANALYST',       'AML Analyst',                  'Investigates AML alerts and prepares case notes')         ON CONFLICT DO NOTHING;
+INSERT INTO sec_role (role_code, role_name, description) VALUES
+  ('AML_SUPERVISOR',    'AML Supervisor',               'Approves alert dispositions and STR drafts')              ON CONFLICT DO NOTHING;
+INSERT INTO sec_role (role_code, role_name, description) VALUES
+  ('COMPLIANCE_OFFICER','Compliance Officer',           'Files STR / CTR with the regulator')                      ON CONFLICT DO NOTHING;
+INSERT INTO sec_role (role_code, role_name, description) VALUES
+  ('DATA_STEWARD',      'Data Steward',                 'Owns data definitions and data-quality remediation')      ON CONFLICT DO NOTHING;
+INSERT INTO sec_role (role_code, role_name, description) VALUES
+  ('DW_ADMIN',          'Data Warehouse Administrator', 'Operates ETL pipelines and warehouse infrastructure')     ON CONFLICT DO NOTHING;
+INSERT INTO sec_role (role_code, role_name, description) VALUES
+  ('RISK_ANALYST',      'Risk Analyst',                 'Performs portfolio and credit risk analysis')             ON CONFLICT DO NOTHING;
+INSERT INTO sec_role (role_code, role_name, description) VALUES
+  ('AUDITOR',           'Auditor',                      'Read-only access to audit trail')                         ON CONFLICT DO NOTHING;
+INSERT INTO sec_role (role_code, role_name, description) VALUES
+  ('MANAGEMENT',        'Management User',              'Executive dashboards and reports')                        ON CONFLICT DO NOTHING;
+INSERT INTO sec_role (role_code, role_name, description) VALUES
+  ('SYSTEM_ADMIN',      'System Administrator',         'Manages users, roles and platform settings')              ON CONFLICT DO NOTHING;
+
+/* -------------------- BRANCHES --------------------------------- */
+INSERT INTO mst_branch (branch_code, branch_name, city, state, country_code, ifsc_code) VALUES
+ ('BR-MUM-01', 'Mumbai Fort',          'Mumbai',     'Maharashtra',   'IN', 'BNKB0001234'),
+ ('BR-DEL-02', 'Delhi Connaught',      'New Delhi',  'Delhi',         'IN', 'BNKB0002234'),
+ ('BR-BLR-03', 'Bengaluru MG Road',    'Bengaluru',  'Karnataka',     'IN', 'BNKB0003234'),
+ ('BR-CHE-04', 'Chennai T Nagar',      'Chennai',    'Tamil Nadu',    'IN', 'BNKB0004234'),
+ ('BR-KOL-05', 'Kolkata Park Street',  'Kolkata',    'West Bengal',   'IN', 'BNKB0005234'),
+ ('BR-AHD-06', 'Ahmedabad CG Road',    'Ahmedabad',  'Gujarat',       'IN', 'BNKB0006234'),
+ ('BR-PUN-07', 'Pune Koregaon Park',   'Pune',       'Maharashtra',   'IN', 'BNKB0007234'),
+ ('BR-HYD-08', 'Hyderabad Banjara Hl', 'Hyderabad',  'Telangana',     'IN', 'BNKB0008234'),
+ ('BR-THM-09', 'Thimphu Norzin Lam',   'Thimphu',    'Thimphu',       'BT', 'BNKB0009234'),
+ ('BR-PRO-10', 'Phuentsholing Town',   'Phuentsholing','Chukha',      'BT', 'BNKB0010234');
+
+/* -------------------- CUSTOMERS -------------------------------- */
+INSERT INTO mst_customer VALUES ('CUST00001','Aarav Sharma',         'INDIVIDUAL','1985-03-12','M','Software Engineer', 'IT',           'Indian',  'IN','BR-MUM-01','VERIFIED','LOW',     FALSE,FALSE,FALSE,'ABCDE1234F','111122223333','+91-9820011001','aarav.sharma@example.com','12 Marine Drive, Mumbai',                  '2021-06-10','ACTIVE',CURRENT_TIMESTAMP);
+INSERT INTO mst_customer VALUES ('CUST00002','Priya Nair',           'INDIVIDUAL','1990-07-25','F','Doctor',            'Healthcare',   'Indian',  'IN','BR-BLR-03','VERIFIED','MEDIUM',  FALSE,FALSE,FALSE,'BCDEF2345G','222233334444','+91-9845022002','priya.nair@example.com',  '45 MG Road, Bengaluru',                    '2020-04-01','ACTIVE',CURRENT_TIMESTAMP);
+INSERT INTO mst_customer VALUES ('CUST00003','Rohit Mehta',          'INDIVIDUAL','1978-11-02','M','Business Owner',    'Trading',      'Indian',  'IN','BR-DEL-02','VERIFIED','HIGH',    FALSE,FALSE,TRUE, 'CDEFG3456H','333344445555','+91-9810033003','rohit.mehta@example.com', '7 Connaught Place, New Delhi',             '2019-09-12','ACTIVE',CURRENT_TIMESTAMP);
+INSERT INTO mst_customer VALUES ('CUST00004','Anjali Iyer',          'INDIVIDUAL','1992-02-14','F','Architect',         'Construction', 'Indian',  'IN','BR-CHE-04','VERIFIED','LOW',     FALSE,FALSE,FALSE,'DEFGH4567I','444455556666','+91-9444044004','anjali.iyer@example.com', '88 T Nagar, Chennai',                      '2022-01-20','ACTIVE',CURRENT_TIMESTAMP);
+INSERT INTO mst_customer VALUES ('CUST00005','Sandeep Banerjee',     'INDIVIDUAL','1982-09-09','M','Importer',          'Import/Export','Indian',  'IN','BR-KOL-05','PENDING', 'HIGH',    TRUE, FALSE,FALSE,'EFGHI5678J','555566667777','+91-9830055005','sandeep.b@example.com',  '5 Park Street, Kolkata',                   '2018-12-03','ACTIVE',CURRENT_TIMESTAMP);
+INSERT INTO mst_customer VALUES ('CUST00006','Meera Patel',          'INDIVIDUAL','1995-12-30','F','Student',           'Education',    'Indian',  'IN','BR-AHD-06','VERIFIED','LOW',     FALSE,FALSE,FALSE,'FGHIJ6789K','666677778888','+91-9979066006','meera.patel@example.com', '101 CG Road, Ahmedabad',                   '2023-03-18','ACTIVE',CURRENT_TIMESTAMP);
+INSERT INTO mst_customer VALUES ('CUST00007','Karma Wangchuk',       'INDIVIDUAL','1980-06-20','M','Hotelier',          'Hospitality',  'Bhutanese','BT','BR-THM-09','VERIFIED','CRITICAL',TRUE, TRUE, TRUE, 'GHIJK7890L','777788889999','+975-17077007','karma.w@example.bt',      'Norzin Lam, Thimphu',                      '2017-08-22','ACTIVE',CURRENT_TIMESTAMP);
+INSERT INTO mst_customer VALUES ('CUST00008','Tashi Dorji',          'INDIVIDUAL','1988-05-05','M','Trader',            'Trading',      'Bhutanese','BT','BR-PRO-10','VERIFIED','MEDIUM',  FALSE,FALSE,FALSE,'HIJKL8901M','888899990000','+975-17188008','tashi.d@example.bt',      'Border Market, Phuentsholing',             '2020-10-11','ACTIVE',CURRENT_TIMESTAMP);
+INSERT INTO mst_customer VALUES ('CUST00009','Vikram Singh Rathore', 'INDIVIDUAL','1973-01-15','M','Politician',        'Government',   'Indian',  'IN','BR-DEL-02','VERIFIED','HIGH',    TRUE, FALSE,FALSE,'IJKLM9012N','999900001111','+91-9810099009','vikram.r@example.com',    '14 Lutyens Bungalow Zone, New Delhi',     '2016-03-04','ACTIVE',CURRENT_TIMESTAMP);
+INSERT INTO mst_customer VALUES ('CUST00010','Lakshmi Holdings Pvt', 'CORPORATE', NULL,        NULL,'Holding Company',   'Real Estate',  'Indian',  'IN','BR-MUM-01','VERIFIED','HIGH',    FALSE,FALSE,FALSE,'AAACL1010A',NULL,           '+91-2222000010','contact@lakshmiholdings.com','BKC, Bandra East, Mumbai',               '2015-07-19','ACTIVE',CURRENT_TIMESTAMP);
+INSERT INTO mst_customer VALUES ('CUST00011','Sunshine Exports SME', 'SME',       NULL,        NULL,'Exporter',          'Garments',     'Indian',  'IN','BR-AHD-06','VERIFIED','MEDIUM',  FALSE,FALSE,FALSE,'AABCS2020B',NULL,           '+91-7922000011','contact@sunshineexports.in','Vatva GIDC, Ahmedabad',                   '2019-02-28','ACTIVE',CURRENT_TIMESTAMP);
+INSERT INTO mst_customer VALUES ('CUST00012','Rishi Kapoor',         'INDIVIDUAL','1965-04-04','M','Retired',           'Other',        'Indian',  'IN','BR-MUM-01','EXPIRED', 'MEDIUM',  FALSE,FALSE,FALSE,'JKLMN0123O','000011112222','+91-9820012012','rishi.k@example.com',     '90 Pali Hill, Mumbai',                     '2010-05-17','DORMANT',CURRENT_TIMESTAMP);
+
+/* -------------------- ACCOUNTS --------------------------------- */
+INSERT INTO mst_account VALUES ('ACC1000000001','CUST00001','SAV','Regular Savings',     'BR-MUM-01','INR','2021-06-12',NULL,'ACTIVE',  185000.00,184500.00,(CURRENT_DATE - INTERVAL '2' DAY), FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000002','CUST00001','CC' ,'Platinum Credit Card','BR-MUM-01','INR','2022-08-01',NULL,'ACTIVE',   -45000.00,    0.00,(CURRENT_DATE - INTERVAL '1' DAY), FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000003','CUST00002','SAV','Privilege Savings',   'BR-BLR-03','INR','2020-04-05',NULL,'ACTIVE',  925000.00,925000.00,(CURRENT_DATE - INTERVAL '3' DAY), FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000004','CUST00003','CUR','Business Current',    'BR-DEL-02','INR','2019-09-15',NULL,'ACTIVE', 4250000.00,4250000.00,(CURRENT_DATE - INTERVAL '1' DAY),FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000005','CUST00003','CC' ,'Business Credit Card','BR-DEL-02','INR','2020-02-10',NULL,'ACTIVE',  -85000.00,    0.00,(CURRENT_DATE - INTERVAL '1' DAY), FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000006','CUST00004','SAV','Regular Savings',     'BR-CHE-04','INR','2022-01-25',NULL,'ACTIVE',   62000.00, 62000.00,(CURRENT_DATE - INTERVAL '7' DAY), FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000007','CUST00005','CUR','Importer Current',    'BR-KOL-05','INR','2018-12-10',NULL,'ACTIVE', 1850000.00,1850000.00,(CURRENT_DATE - INTERVAL '1' DAY),FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000008','CUST00006','SAV','Student Savings',     'BR-AHD-06','INR','2023-03-22',NULL,'ACTIVE',    8500.00,  8500.00,(CURRENT_DATE - INTERVAL '5' DAY), FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000009','CUST00007','CUR','Hotelier Current',    'BR-THM-09','BTN','2017-09-01',NULL,'ACTIVE',12500000.00,12500000.00,(CURRENT_DATE - INTERVAL '1' DAY),FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000010','CUST00008','CUR','Trader Current',      'BR-PRO-10','BTN','2020-10-15',NULL,'ACTIVE',  675000.00,675000.00,(CURRENT_DATE - INTERVAL '2' DAY), FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000011','CUST00009','SAV','Privilege Savings',   'BR-DEL-02','INR','2016-03-15',NULL,'ACTIVE', 5250000.00,5250000.00,(CURRENT_DATE - INTERVAL '1' DAY),FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000012','CUST00010','CUR','Corporate Current',   'BR-MUM-01','INR','2015-08-01',NULL,'ACTIVE',32500000.00,32500000.00,(CURRENT_DATE - INTERVAL '1' DAY),FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000013','CUST00011','CUR','SME Current',         'BR-AHD-06','INR','2019-03-05',NULL,'ACTIVE', 2150000.00,2150000.00,(CURRENT_DATE - INTERVAL '1' DAY),FALSE,0, CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000014','CUST00012','SAV','Regular Savings',     'BR-MUM-01','INR','2010-05-20','2024-12-31','DORMANT', 12500.00, 12500.00,(CURRENT_DATE - INTERVAL '410' DAY),TRUE,410,CURRENT_TIMESTAMP);
+INSERT INTO mst_account VALUES ('ACC1000000015','CUST00007','SAV','Privilege Savings',   'BR-THM-09','BTN','2018-04-20',NULL,'ACTIVE', 4250000.00,4250000.00,(CURRENT_DATE - INTERVAL '2' DAY),FALSE,0, CURRENT_TIMESTAMP);
+
+/* -------------------- TRANSACTIONS ---------------------------- */
+INSERT INTO fact_transaction VALUES ('TXN0000000001','ACC1000000001','CUST00001',(CURRENT_TIMESTAMP - INTERVAL '2' DAY),(CURRENT_TIMESTAMP - INTERVAL '2' DAY),'CREDIT','NEFT','NB',     85000.00,'INR','Tata Consultancy','TCSACC123','HDFC Bank','IN',FALSE,FALSE,FALSE,'BR-MUM-01','Salary credit','POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000002','ACC1000000001','CUST00001',(CURRENT_TIMESTAMP - INTERVAL '2' DAY),(CURRENT_TIMESTAMP - INTERVAL '2' DAY),'DEBIT', 'UPI', 'MB',      1500.00,'INR','Big Bazaar',     'BBZACC456','ICICI Bank','IN',FALSE,FALSE,FALSE,'BR-MUM-01','Groceries',    'POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000003','ACC1000000003','CUST00002',(CURRENT_TIMESTAMP - INTERVAL '3' DAY),(CURRENT_TIMESTAMP - INTERVAL '3' DAY),'CREDIT','RTGS','BRANCH',150000.00,'INR','Apollo Hospital','APOLO789','SBI','IN',     FALSE,FALSE,FALSE,'BR-BLR-03','Consultation fees','POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000004','ACC1000000004','CUST00003',(CURRENT_TIMESTAMP - INTERVAL '1' DAY),(CURRENT_TIMESTAMP - INTERVAL '1' DAY),'CREDIT','CASH','BRANCH',1850000.00,'INR','Walk-in Customer','-',         '-',         'IN',TRUE, FALSE,TRUE, 'BR-DEL-02','Cash deposit',   'POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000005','ACC1000000004','CUST00003',(CURRENT_TIMESTAMP - INTERVAL '2' HOUR),(CURRENT_TIMESTAMP - INTERVAL '2' HOUR),'DEBIT','RTGS','NB',  1750000.00,'INR','Global Traders Inc','GLB987654','HSBC',     'AE',FALSE,TRUE,TRUE, 'BR-DEL-02','Inventory purchase','POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000006','ACC1000000007','CUST00005',(CURRENT_TIMESTAMP - INTERVAL '1' DAY),(CURRENT_TIMESTAMP - INTERVAL '1' DAY),'CREDIT','SWIFT','SWIFT',  2750000.00,'USD','Singapore Trade Co','SGT123','DBS',      'SG',FALSE,TRUE,TRUE, 'BR-KOL-05','Export remittance','POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000007','ACC1000000007','CUST00005',(CURRENT_TIMESTAMP - INTERVAL '3' HOUR),(CURRENT_TIMESTAMP - INTERVAL '3' HOUR),'DEBIT','CASH','BRANCH',  450000.00,'INR','Walk-in Customer','-',         '-',         'IN',TRUE, FALSE,FALSE,'BR-KOL-05','Cash withdrawal','POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000008','ACC1000000009','CUST00007',(CURRENT_TIMESTAMP - INTERVAL '1' DAY),(CURRENT_TIMESTAMP - INTERVAL '1' DAY),'CREDIT','CASH','BRANCH', 9250000.00,'BTN','Walk-in Customer','-',         '-',         'BT',TRUE, FALSE,TRUE, 'BR-THM-09','Hotel cash deposit','POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000009','ACC1000000009','CUST00007',(CURRENT_TIMESTAMP - INTERVAL '1' HOUR),(CURRENT_TIMESTAMP - INTERVAL '1' HOUR),'DEBIT','SWIFT','SWIFT',1850000.00,'USD','Offshore Holdings Ltd','OFS456','UBS','CH',FALSE,TRUE,TRUE,'BR-THM-09','Asset purchase','POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000010','ACC1000000011','CUST00009',(CURRENT_TIMESTAMP - INTERVAL '1' DAY),(CURRENT_TIMESTAMP - INTERVAL '1' DAY),'CREDIT','RTGS','BRANCH', 5000000.00,'INR','Anonymous Donor', 'ANON321','-',         'IN',FALSE,FALSE,TRUE, 'BR-DEL-02','Political donation','POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000011','ACC1000000012','CUST00010',(CURRENT_TIMESTAMP - INTERVAL '1' DAY),(CURRENT_TIMESTAMP - INTERVAL '1' DAY),'DEBIT', 'RTGS','NB',     7500000.00,'INR','Lakshmi Constructions','LAK456','Yes Bank','IN',FALSE,FALSE,TRUE,'BR-MUM-01','Project funding','POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000012','ACC1000000014','CUST00012',(CURRENT_TIMESTAMP - INTERVAL '3' DAY),(CURRENT_TIMESTAMP - INTERVAL '3' DAY),'CREDIT','CASH','BRANCH', 250000.00,'INR','Walk-in Customer','-',         '-',         'IN',TRUE, FALSE,FALSE,'BR-MUM-01','Reactivation deposit','POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000013','ACC1000000010','CUST00008',(CURRENT_TIMESTAMP - INTERVAL '2' DAY),(CURRENT_TIMESTAMP - INTERVAL '2' DAY),'CREDIT','SWIFT','SWIFT', 425000.00,'USD','India Trader Co.','ITC123','HDFC Bank','IN',FALSE,TRUE,FALSE,'BR-PRO-10','Goods receipt','POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000014','ACC1000000003','CUST00002',(CURRENT_TIMESTAMP - INTERVAL '5' DAY),(CURRENT_TIMESTAMP - INTERVAL '5' DAY),'DEBIT', 'NEFT','NB',     45000.00,'INR','Apollo Pharmacy', 'APH456','SBI','IN',     FALSE,FALSE,FALSE,'BR-BLR-03','Equipment purchase','POSTED');
+INSERT INTO fact_transaction VALUES ('TXN0000000015','ACC1000000013','CUST00011',(CURRENT_TIMESTAMP - INTERVAL '2' DAY),(CURRENT_TIMESTAMP - INTERVAL '2' DAY),'CREDIT','SWIFT','SWIFT', 185000.00,'EUR','EuroFashion BV',  'EFB777','ABN Amro','NL',FALSE,TRUE,FALSE,'BR-AHD-06','Garment exports','POSTED');
+
+/* -------------------- ALERTS ---------------------------------- */
+INSERT INTO fact_alert VALUES ('ALT-1001','AML',     'RULE_HV_CASH',           'High-value cash deposit > 10 lakh',           'CUST00003','ACC1000000004','TXN0000000004','BR-DEL-02',82,'HIGH',    'OPEN',     'analyst',   1000000.00,1850000.00,NULL,NULL,NULL,NULL,NULL,(CURRENT_TIMESTAMP - INTERVAL '12' HOUR),NULL,1);
+INSERT INTO fact_alert VALUES ('ALT-1002','AML',     'RULE_RAPID_OUT',         'Rapid outbound after large credit',           'CUST00003','ACC1000000004','TXN0000000005','BR-DEL-02',88,'CRITICAL','IN_REVIEW','supervisor',NULL,      NULL,      NULL,NULL,NULL,NULL,NULL,(CURRENT_TIMESTAMP - INTERVAL '10' HOUR),NULL,0);
+INSERT INTO fact_alert VALUES ('ALT-1003','AML',     'RULE_CB_HIGH_RISK',      'Cross-border txn to high-risk jurisdiction',  'CUST00005','ACC1000000007','TXN0000000006','BR-KOL-05',75,'HIGH',    'OPEN',     'analyst',   500000.00, 2750000.00,NULL,NULL,NULL,NULL,NULL,(CURRENT_TIMESTAMP - INTERVAL '20' HOUR),NULL,1);
+INSERT INTO fact_alert VALUES ('ALT-1004','AML',     'RULE_PEP_LARGE_CREDIT',  'Large credit to PEP customer',                'CUST00009','ACC1000000011','TXN0000000010','BR-DEL-02',92,'CRITICAL','OPEN',     'supervisor',1000000.00,5000000.00,NULL,NULL,NULL,NULL,NULL,(CURRENT_TIMESTAMP - INTERVAL '8' HOUR), NULL,1);
+INSERT INTO fact_alert VALUES ('ALT-1005','AML',     'RULE_DORMANT_REACT',     'Suspicious dormant account reactivation',     'CUST00012','ACC1000000014','TXN0000000012','BR-MUM-01',78,'HIGH',    'OPEN',     'analyst',   100000.00, 250000.00, NULL,NULL,NULL,NULL,NULL,(CURRENT_TIMESTAMP - INTERVAL '4' HOUR), NULL,0);
+INSERT INTO fact_alert VALUES ('ALT-1006','POSITIVE','RULE_HV_CASH',           'High-value cash deposit > 10 lakh',           'CUST00007','ACC1000000009','TXN0000000008','BR-THM-09',95,'CRITICAL','OPEN',     'compliance', 1000000.00,9250000.00,NULL,NULL,NULL,NULL,NULL,(CURRENT_TIMESTAMP - INTERVAL '6' HOUR),NULL,0);
+INSERT INTO fact_alert VALUES ('ALT-1007','POSITIVE','RULE_OFFSHORE_OUT',      'Outbound transfer to offshore haven',         'CUST00007','ACC1000000009','TXN0000000009','BR-THM-09',93,'CRITICAL','OPEN',     'compliance', 500000.00, 1850000.00,NULL,NULL,NULL,NULL,NULL,(CURRENT_TIMESTAMP - INTERVAL '5' HOUR),NULL,0);
+INSERT INTO fact_alert VALUES ('ALT-1008','NEGATIVE','RULE_PEP_NAME_MATCH',    'PEP name match (no DOB / address match)',     'CUST00004','ACC1000000006',NULL,            'BR-CHE-04',45,'LOW',     'CLOSED',   'analyst',   NULL,       NULL,      'No match — different DOB and address','Different PEP individual','Investigation closed — false positive','Verified KYC','supervisor',(CURRENT_TIMESTAMP - INTERVAL '5' DAY),(CURRENT_TIMESTAMP - INTERVAL '2' DAY),3);
+INSERT INTO fact_alert VALUES ('ALT-1009','NEGATIVE','RULE_SANCTION_PARTIAL',  'Sanction list partial match',                 'CUST00006','ACC1000000008',NULL,            'BR-AHD-06',38,'LOW',     'CLOSED',   'analyst',   NULL,       NULL,      'No match — partial name match',NULL,'Closed — different country and DOB','-','supervisor',(CURRENT_TIMESTAMP - INTERVAL '7' DAY),(CURRENT_TIMESTAMP - INTERVAL '3' DAY),4);
+INSERT INTO fact_alert VALUES ('ALT-1010','POSITIVE','RULE_LARGE_INWARD_FX',   'Large inward foreign currency credit',        'CUST00011','ACC1000000013','TXN0000000015','BR-AHD-06',67,'MEDIUM',  'IN_REVIEW','analyst',   500000.00, 1850000.00,NULL,NULL,NULL,NULL,NULL,(CURRENT_TIMESTAMP - INTERVAL '2' HOUR),NULL,0);
+
+/* -------------------- STR ------------------------------------- */
+INSERT INTO fact_str VALUES ('STR2024-001','CUST00007','ACC1000000009','ALT-1007','BR-THM-09',
+   'Multi-jurisdiction layered transfers; offshore receiving entity; PEP + sanction exposure',
+   'Customer Karma Wangchuk (CUST00007) executed 2 high-value transactions in the past 24 hours: a 92.5 lakh BTN cash deposit followed by an 18.5 lakh USD outbound SWIFT to UBS Switzerland (Offshore Holdings Ltd). The customer carries PEP, sanction and adverse-media flags. Cash deposit pattern and rapid offshore transfer suggest layering. Recommend filing STR with FIU-Bhutan and freezing further outbound transactions.',
+   1850000.00, 2,'APPROVED','analyst','supervisor','FIU-Bhutan',NULL,
+   (CURRENT_TIMESTAMP - INTERVAL '2' DAY),(CURRENT_TIMESTAMP - INTERVAL '1' DAY),(CURRENT_TIMESTAMP - INTERVAL '6' HOUR),NULL);
+
+INSERT INTO fact_str VALUES ('STR2024-002','CUST00009','ACC1000000011','ALT-1004','BR-DEL-02',
+   'Large credit from anonymous donor to PEP account; political exposure',
+   'Customer Vikram Singh Rathore (PEP) received a 50 lakh INR RTGS credit from an anonymous donor account. The customer is flagged as PEP. The originator account does not have associated KYC details accessible to our institution.',
+   5000000.00, 1,'SUBMITTED','analyst',NULL,NULL,NULL,
+   (CURRENT_TIMESTAMP - INTERVAL '1' DAY),(CURRENT_TIMESTAMP - INTERVAL '2' HOUR),NULL,NULL);
+
+INSERT INTO fact_str VALUES ('STR2024-003','CUST00003','ACC1000000004','ALT-1002','BR-DEL-02',
+   'Rapid outbound transfer following large cash deposit; possible structuring/layering',
+   'DRAFT — please review.',
+   1850000.00, 2,'DRAFT','analyst',NULL,NULL,NULL,
+   (CURRENT_TIMESTAMP - INTERVAL '3' HOUR),NULL,NULL,NULL);
+
+/* -------------------- CTR ------------------------------------- */
+INSERT INTO fact_ctr VALUES ('CTR2024-001','CUST00007','ACC1000000009','BR-THM-09',CURRENT_DATE,1, 9250000.00,1000000.00,'BTN','APPROVED','compliance',(CURRENT_TIMESTAMP - INTERVAL '12' HOUR),(CURRENT_TIMESTAMP - INTERVAL '2' HOUR));
+INSERT INTO fact_ctr VALUES ('CTR2024-002','CUST00003','ACC1000000004','BR-DEL-02',CURRENT_DATE,1, 1850000.00,1000000.00,'INR','APPROVED','compliance',(CURRENT_TIMESTAMP - INTERVAL '10' HOUR),(CURRENT_TIMESTAMP - INTERVAL '1' HOUR));
+INSERT INTO fact_ctr VALUES ('CTR2024-003','CUST00010','ACC1000000012','BR-MUM-01',CURRENT_DATE,1, 7500000.00,1000000.00,'INR','DRAFT',   NULL,         (CURRENT_TIMESTAMP - INTERVAL '2' HOUR), NULL);
+
+/* -------------------- DORMANT --------------------------------- */
+INSERT INTO fact_dormant_account VALUES ('ACC1000000014','CUST00012','BR-MUM-01',(CURRENT_DATE - INTERVAL '410' DAY),410,'REACTIVATED',(CURRENT_DATE - INTERVAL '3' DAY),TRUE,TRUE);
+INSERT INTO fact_dormant_account VALUES ('ACC1000000016','CUST00006','BR-AHD-06',(CURRENT_DATE - INTERVAL '380' DAY),380,'DORMANT',     NULL,           FALSE,FALSE);
+INSERT INTO fact_dormant_account VALUES ('ACC1000000017','CUST00011','BR-AHD-06',(CURRENT_DATE - INTERVAL '365' DAY),365,'DORMANT',     NULL,           FALSE,FALSE);
+INSERT INTO fact_dormant_account VALUES ('ACC1000000018','CUST00012','BR-MUM-01',(CURRENT_DATE - INTERVAL '720' DAY),720,'DORMANT',     NULL,           FALSE,FALSE);
+
+/* -------------------- LOAN APPLICATIONS ----------------------- */
+INSERT INTO fact_loan_application VALUES ('LOAN-AL-001','CUST00001','AL','Honda City auto loan',         750000.00, 60, 9.250,742,'LOW',    0,'APPROVED', 'BR-MUM-01',(CURRENT_DATE - INTERVAL '30' DAY),(CURRENT_DATE - INTERVAL '22' DAY));
+INSERT INTO fact_loan_application VALUES ('LOAN-AL-002','CUST00002','AL','Maruti Brezza auto loan',      650000.00, 60, 9.500,705,'LOW',    0,'DISBURSED','BR-BLR-03',(CURRENT_DATE - INTERVAL '90' DAY),(CURRENT_DATE - INTERVAL '80' DAY));
+INSERT INTO fact_loan_application VALUES ('LOAN-AL-003','CUST00007','AL','Toyota Land Cruiser auto loan',9500000.00,84,11.250,690,'HIGH',   2,'UNDER_REVIEW','BR-THM-09',(CURRENT_DATE - INTERVAL '7' DAY),NULL);
+INSERT INTO fact_loan_application VALUES ('LOAN-ML-001','CUST00003','ML','Premium home loan',          25000000.00,240, 8.450,720,'MEDIUM', 1,'APPROVED', 'BR-DEL-02',(CURRENT_DATE - INTERVAL '60' DAY),(CURRENT_DATE - INTERVAL '45' DAY));
+INSERT INTO fact_loan_application VALUES ('LOAN-ML-002','CUST00010','ML','Commercial property loan',  150000000.00,180, 9.150,710,'MEDIUM', 0,'DISBURSED','BR-MUM-01',(CURRENT_DATE - INTERVAL '180' DAY),(CURRENT_DATE - INTERVAL '150' DAY));
+INSERT INTO fact_loan_application VALUES ('LOAN-ML-003','CUST00009','ML','Bungalow refinance',         80000000.00,240, 8.250,755,'MEDIUM', 1,'APPROVED', 'BR-DEL-02',(CURRENT_DATE - INTERVAL '100' DAY),(CURRENT_DATE - INTERVAL '90' DAY));
+INSERT INTO fact_loan_application VALUES ('LOAN-CC-001','CUST00001','CC','Platinum credit card',         300000.00, 12,18.000,742,'LOW',    0,'DISBURSED','BR-MUM-01',(CURRENT_DATE - INTERVAL '200' DAY),(CURRENT_DATE - INTERVAL '185' DAY));
+INSERT INTO fact_loan_application VALUES ('LOAN-CC-002','CUST00003','CC','Business credit card',       1500000.00, 12,17.500,720,'MEDIUM', 1,'DISBURSED','BR-DEL-02',(CURRENT_DATE - INTERVAL '300' DAY),(CURRENT_DATE - INTERVAL '280' DAY));
+INSERT INTO fact_loan_application VALUES ('LOAN-CC-003','CUST00006','CC','Student credit card',           50000.00, 12,22.000,640,'LOW',    0,'APPROVED', 'BR-AHD-06',(CURRENT_DATE - INTERVAL '15' DAY),(CURRENT_DATE - INTERVAL '5' DAY));
+INSERT INTO fact_loan_application VALUES ('LOAN-PL-001','CUST00002','PL','Personal loan',               500000.00, 36,12.500,705,'LOW',    0,'APPROVED', 'BR-BLR-03',(CURRENT_DATE - INTERVAL '40' DAY),(CURRENT_DATE - INTERVAL '30' DAY));
+INSERT INTO fact_loan_application VALUES ('LOAN-PL-002','CUST00005','PL','Personal loan',              1500000.00, 60,13.250,672,'HIGH',   1,'REJECTED', 'BR-KOL-05',(CURRENT_DATE - INTERVAL '25' DAY),(CURRENT_DATE - INTERVAL '15' DAY));
+INSERT INTO fact_loan_application VALUES ('LOAN-PL-003','CUST00008','PL','Personal loan',               750000.00, 36,12.000,690,'MEDIUM', 0,'UNDER_REVIEW','BR-PRO-10',(CURRENT_DATE - INTERVAL '5' DAY),NULL);
+
+/* -------------------- DATA CATALOGUE -------------------------- */
+INSERT INTO dw_data_catalogue (source_system, source_table, source_field, table_name, column_name, data_type, business_definition, data_owner, data_quality_score, pii_flag, aml_relevance, domain) VALUES
+ ('Core Banking',   'CBS.CUST_MASTER',     'CUST_ID',         'mst_customer',         'customer_id',           'VARCHAR(32)',  'Unique customer identifier issued by core banking',         'Data Steward — Customer', 99,FALSE,'HIGH','Customer'),
+ ('Core Banking',   'CBS.CUST_MASTER',     'CUST_NAME',       'mst_customer',         'customer_name',         'VARCHAR(128)', 'Full legal name of the customer',                            'Data Steward — Customer', 97,TRUE, 'HIGH','Customer'),
+ ('Core Banking',   'CBS.CUST_MASTER',     'PAN_NO',          'mst_customer',         'pan_number',            'VARCHAR(16)',  'Permanent Account Number issued by Income Tax dept',         'Data Steward — Customer', 96,TRUE, 'HIGH','Customer'),
+ ('Core Banking',   'CBS.CUST_MASTER',     'AADHAAR_NO',      'mst_customer',         'aadhaar_number',        'VARCHAR(16)',  'Aadhaar identifier (UIDAI)',                                 'Data Steward — Customer', 92,TRUE, 'HIGH','Customer'),
+ ('KYC System',     'KYC.RISK_RATING',     'RISK',            'mst_customer',         'risk_rating',           'VARCHAR(16)',  'Risk band assigned by KYC: LOW / MEDIUM / HIGH / CRITICAL', 'Compliance Officer',     98,FALSE,'HIGH','Customer'),
+ ('KYC System',     'KYC.PEP_FLAG',        'PEP',             'mst_customer',         'pep_flag',              'BOOLEAN',      'Politically Exposed Person flag',                            'Compliance Officer',     99,FALSE,'HIGH','Customer'),
+ ('Sanctions API',  'SCRN.SANCTION',       'HIT_FLAG',        'mst_customer',         'sanction_flag',         'BOOLEAN',      'Sanction screening hit',                                     'Compliance Officer',     97,FALSE,'HIGH','Customer'),
+ ('Adverse Media',  'ADV.HIT',             'HIT_FLAG',        'mst_customer',         'adverse_media_flag',    'BOOLEAN',      'Adverse media screening hit',                                'Compliance Officer',     90,FALSE,'MEDIUM','Customer'),
+ ('Core Banking',   'CBS.ACCT_MASTER',     'ACCT_NO',         'mst_account',          'account_number',        'VARCHAR(32)',  'Account number',                                             'Data Steward — Account', 99,TRUE, 'HIGH','Account'),
+ ('Core Banking',   'CBS.ACCT_MASTER',     'BAL',             'mst_account',          'current_balance',       'NUMERIC',      'Current ledger balance',                                     'Data Steward — Account', 97,FALSE,'MEDIUM','Account'),
+ ('Core Banking',   'CBS.ACCT_MASTER',     'STATUS',          'mst_account',          'status',                'VARCHAR(16)',  'Account status (ACTIVE/DORMANT/CLOSED/FROZEN)',              'Data Steward — Account', 99,FALSE,'HIGH','Account'),
+ ('Core Banking',   'CBS.TXN_DAILY',       'TXN_ID',          'fact_transaction',     'transaction_id',        'VARCHAR(32)',  'Unique transaction identifier',                              'Data Steward — Txn',     99,FALSE,'HIGH','Transaction'),
+ ('Core Banking',   'CBS.TXN_DAILY',       'AMOUNT',          'fact_transaction',     'amount',                'NUMERIC',      'Transaction amount in account currency',                     'Data Steward — Txn',     99,FALSE,'HIGH','Transaction'),
+ ('Core Banking',   'CBS.TXN_DAILY',       'CASH_FLG',        'fact_transaction',     'is_cash',               'BOOLEAN',      'Indicates a cash leg in the transaction',                    'Data Steward — Txn',     98,FALSE,'HIGH','Transaction'),
+ ('Core Banking',   'CBS.TXN_DAILY',       'CB_FLG',          'fact_transaction',     'is_cross_border',       'BOOLEAN',      'Indicates a cross-border counterparty',                      'Data Steward — Txn',     96,FALSE,'HIGH','Transaction'),
+ ('AML Engine',     'AMLE.ALERT',          'RULE_CODE',       'fact_alert',           'rule_code',             'VARCHAR(64)',  'Code of the AML rule that triggered the alert',              'Compliance Officer',     99,FALSE,'HIGH','Risk'),
+ ('AML Engine',     'AMLE.ALERT',          'RISK_SCORE',      'fact_alert',           'risk_score',            'INT',          'Risk score 0-100 assigned by the rule engine',               'Compliance Officer',     97,FALSE,'HIGH','Risk'),
+ ('LOS',            'LOS.APPLICATION',     'CREDIT_SCORE',    'fact_loan_application','credit_score',          'INT',          'Bureau credit score at time of underwriting',                'Risk Analyst',           98,FALSE,'MEDIUM','LOS'),
+ ('LOS',            'LOS.APPLICATION',     'STATUS',          'fact_loan_application','status',                'VARCHAR(32)',  'Application life-cycle status',                              'Risk Analyst',           99,FALSE,'LOW',   'LOS'),
+ ('Compliance',     'COMP.STR',            'NARRATIVE',       'fact_str',             'narrative',             'TEXT',         'Free-text STR narrative shared with regulator',              'Compliance Officer',     95,TRUE, 'HIGH','Compliance');
+
+/* -------------------- ETL JOBS -------------------------------- */
+INSERT INTO dw_etl_job VALUES ('ETL-001','load_mst_customer','CBS','mst_customer',         'INCREMENTAL','SUCCESS', (CURRENT_TIMESTAMP - INTERVAL '6' HOUR),(CURRENT_TIMESTAMP - INTERVAL '5' HOUR),12500,12498,2,NULL);
+INSERT INTO dw_etl_job VALUES ('ETL-002','load_mst_account','CBS', 'mst_account',          'INCREMENTAL','SUCCESS', (CURRENT_TIMESTAMP - INTERVAL '6' HOUR),(CURRENT_TIMESTAMP - INTERVAL '5' HOUR),18750,18750,0,NULL);
+INSERT INTO dw_etl_job VALUES ('ETL-003','load_fact_transaction','CBS','fact_transaction','INCREMENTAL','RUNNING', (CURRENT_TIMESTAMP - INTERVAL '5' MINUTE),NULL,                              285000,250000,0,NULL);
+INSERT INTO dw_etl_job VALUES ('ETL-004','load_fact_alert','AMLE','fact_alert',            'DELTA',      'SUCCESS', (CURRENT_TIMESTAMP - INTERVAL '2' HOUR),(CURRENT_TIMESTAMP - INTERVAL '2' HOUR),  450,    450,   0,NULL);
+INSERT INTO dw_etl_job VALUES ('ETL-005','load_kyc_screening','KYC','mst_customer',        'CDC',        'FAILED',  (CURRENT_TIMESTAMP - INTERVAL '3' HOUR),(CURRENT_TIMESTAMP - INTERVAL '3' HOUR),  120,    115,   5,'Source connection timed out after 30s');
+INSERT INTO dw_etl_job VALUES ('ETL-006','load_adverse_media','ADV','mst_customer',        'FULL',       'SUCCESS', (CURRENT_TIMESTAMP - INTERVAL '4' HOUR),(CURRENT_TIMESTAMP - INTERVAL '4' HOUR), 8500,   8480,  20,NULL);
+INSERT INTO dw_etl_job VALUES ('ETL-007','load_los_application','LOS','fact_loan_application','INCREMENTAL','SUCCESS',(CURRENT_TIMESTAMP - INTERVAL '6' HOUR),(CURRENT_TIMESTAMP - INTERVAL '6' HOUR), 250,    250,   0,NULL);
+INSERT INTO dw_etl_job VALUES ('ETL-008','rebuild_dq_metrics','DW','dw_data_quality_issue','FULL',       'SUCCESS', (CURRENT_TIMESTAMP - INTERVAL '1' HOUR),(CURRENT_TIMESTAMP - INTERVAL '1' HOUR),   85,     85,   0,NULL);
+
+/* -------------------- DATA QUALITY ---------------------------- */
+INSERT INTO dw_data_quality_issue (rule_code, rule_name, table_name, column_name, issue_type, severity, record_count, status, assigned_to, detected_at) VALUES
+ ('DQ-001','PAN must be 10 chars and match regex',  'mst_customer','pan_number',         'INVALID_CODE',     'HIGH',     12, 'OPEN',    'steward', (CURRENT_TIMESTAMP - INTERVAL '3' HOUR)),
+ ('DQ-002','Aadhaar must be exactly 12 digits',     'mst_customer','aadhaar_number',     'VALIDATION_FAILED','HIGH',      8, 'ASSIGNED','steward', (CURRENT_TIMESTAMP - INTERVAL '5' HOUR)),
+ ('DQ-003','customer_name cannot be NULL',          'mst_customer','customer_name',      'MISSING',          'CRITICAL',  3, 'OPEN',    'steward', (CURRENT_TIMESTAMP - INTERVAL '2' HOUR)),
+ ('DQ-004','Duplicate customer (PAN, mobile)',      'mst_customer','pan_number',         'DUPLICATE',        'MEDIUM',    5, 'OPEN',    'steward', (CURRENT_TIMESTAMP - INTERVAL '1' HOUR)),
+ ('DQ-005','Account balance cannot be NULL',        'mst_account', 'current_balance',    'MISSING',          'HIGH',      2, 'RESOLVED','dwadmin', (CURRENT_TIMESTAMP - INTERVAL '5' DAY)),
+ ('DQ-006','Currency must be ISO 4217 code',        'fact_transaction','currency',       'INVALID_CODE',     'MEDIUM',   18, 'OPEN',    'dwadmin', (CURRENT_TIMESTAMP - INTERVAL '6' HOUR)),
+ ('DQ-007','Amount must be > 0',                    'fact_transaction','amount',         'VALIDATION_FAILED','HIGH',     11, 'ASSIGNED','dwadmin', (CURRENT_TIMESTAMP - INTERVAL '2' HOUR)),
+ ('DQ-008','Risk rating must be in standard set',   'mst_customer','risk_rating',        'INVALID_CODE',     'HIGH',      6, 'OPEN',    'steward', (CURRENT_TIMESTAMP - INTERVAL '4' HOUR)),
+ ('DQ-009','Branch code must reference mst_branch', 'mst_account', 'branch_code',        'VALIDATION_FAILED','MEDIUM',    9, 'OPEN',    'dwadmin', (CURRENT_TIMESTAMP - INTERVAL '7' HOUR)),
+ ('DQ-010','STR narrative cannot be empty',         'fact_str',    'narrative',          'MISSING',          'HIGH',      1, 'RESOLVED','compliance',(CURRENT_TIMESTAMP - INTERVAL '2' DAY));
+
+/* -------------------- AUDIT (sample) ------------------------- */
+INSERT INTO audit_user_activity (username, module_name, action, status, duration_ms, ip_address, activity_time) VALUES
+ ('analyst',   'AUTH',     'LOGIN',     'SUCCESS', 145, '10.10.5.12',  (CURRENT_TIMESTAMP - INTERVAL '8' HOUR)),
+ ('analyst',   'CUSTOMER', 'VIEW_360',  'SUCCESS',  82, '10.10.5.12',  (CURRENT_TIMESTAMP - INTERVAL '7' HOUR)),
+ ('analyst',   'ALERT',    'ASSIGN',    'SUCCESS',  56, '10.10.5.12',  (CURRENT_TIMESTAMP - INTERVAL '7' HOUR)),
+ ('supervisor','STR',      'APPROVE',   'SUCCESS', 102, '10.10.5.13',  (CURRENT_TIMESTAMP - INTERVAL '6' HOUR)),
+ ('compliance','STR',      'FILE',      'SUCCESS', 195, '10.10.5.14',  (CURRENT_TIMESTAMP - INTERVAL '5' HOUR)),
+ ('steward',   'CATALOGUE','EXPORT',    'SUCCESS', 312, '10.10.6.21',  (CURRENT_TIMESTAMP - INTERVAL '4' HOUR)),
+ ('dwadmin',   'ETL',      'RERUN',     'SUCCESS', 245, '10.10.7.31',  (CURRENT_TIMESTAMP - INTERVAL '3' HOUR)),
+ ('auditor',   'AUDIT',    'LIST',      'SUCCESS',  64, '10.10.8.41',  (CURRENT_TIMESTAMP - INTERVAL '2' HOUR)),
+ ('mgmt',      'DASHBOARD','SUMMARY',   'SUCCESS',  41, '10.10.9.51',  (CURRENT_TIMESTAMP - INTERVAL '1' HOUR)),
+ ('sysadmin',  'USER',     'LIST',      'SUCCESS',  38, '10.10.1.10',  (CURRENT_TIMESTAMP - INTERVAL '1' HOUR));
