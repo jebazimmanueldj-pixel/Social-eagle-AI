@@ -1,0 +1,11 @@
+package com.bank.amlwarehouse.repository;
+
+import com.bank.amlwarehouse.entity.DwDataQualityIssue;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface DwDataQualityIssueRepository extends JpaRepository<DwDataQualityIssue, Long> {
+    Page<DwDataQualityIssue> findByStatus(String status, Pageable pageable);
+    long countByStatus(String status);
+}

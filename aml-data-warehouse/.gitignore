@@ -1,0 +1,25 @@
+# Node
+node_modules/
+dist/
+.vite/
+*.log
+
+# Java
+target/
+.mvn/
+!.mvn/wrapper
+!mvnw
+!mvnw.cmd
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Env
+.env
+.env.local

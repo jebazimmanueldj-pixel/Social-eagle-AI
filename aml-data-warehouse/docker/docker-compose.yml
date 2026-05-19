@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: aml-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: aml_dw
+      POSTGRES_USER: aml_user
+      POSTGRES_PASSWORD: aml_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - aml-pg-data:/var/lib/postgresql/data
+      - ../backend/src/main/resources/db/migration/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ../backend/src/main/resources/db/migration/data.sql:/docker-entrypoint-initdb.d/02-data.sql:ro
+
+  mongo:
+    image: mongo:6
+    container_name: aml-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: aml_user
+      MONGO_INITDB_ROOT_PASSWORD: aml_pass
+      MONGO_INITDB_DATABASE: aml_dw
+    ports:
+      - "27017:27017"
+    volumes:
+      - aml-mongo-data:/data/db
+      - ../backend/src/main/resources/mongo/init.js:/docker-entrypoint-initdb.d/init.js:ro
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: aml-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@aml.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: aml-mongo-express
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: aml_user
+      ME_CONFIG_MONGODB_ADMINPASSWORD: aml_pass
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
+
+volumes:
+  aml-pg-data:
+  aml-mongo-data:
