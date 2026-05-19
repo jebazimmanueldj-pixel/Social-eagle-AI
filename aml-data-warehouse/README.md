@@ -1,196 +1,236 @@
 # AML Data Warehouse — Enterprise Banking Application
 
 A full-stack, banking-grade prototype for **Anti-Money-Laundering (AML) Data Warehousing**.
-It combines structured warehouse data (PostgreSQL) with unstructured AI / case-management
-content (MongoDB), exposes REST APIs through Spring Boot, and ships a modern React +
-TypeScript front end with role-based access, dashboards, an AI Query Assistant and a
-drag-and-drop query builder.
 
 ---
 
-## Tech Stack
-
-| Layer        | Technology                                                |
-| ------------ | --------------------------------------------------------- |
-| Frontend     | React 18, TypeScript, Vite, Tailwind CSS, React Router, Recharts, Axios, React Query |
-| Backend      | Java 17, Spring Boot 3, Spring Security, JWT, JPA, springdoc-openapi |
-| Structured DB| PostgreSQL 15 (with H2 fallback for local dev)            |
-| Document DB  | MongoDB 6                                                 |
-| Build / Run  | Maven, npm, Docker Compose                                |
-
----
-
-## Repository Layout
-
-```
-aml-data-warehouse/
-├── backend/                        # Spring Boot application
-│   └── src/main/java/com/bank/amlwarehouse/
-│       ├── config/                 # Security, CORS, OpenAPI, Mongo config
-│       ├── controller/             # REST controllers (one per module)
-│       ├── service/                # Business interfaces
-│       │   └── impl/               # Service implementations
-│       ├── repository/             # JPA + Mongo repositories
-│       ├── entity/                 # JPA entities + Mongo documents
-│       ├── dto/                    # Request / response DTOs
-│       ├── mapper/                 # Entity <-> DTO mappers
-│       ├── security/               # JWT filter, user details, password
-│       ├── exception/              # Global exception handler
-│       ├── audit/                  # Audit aspect + logger
-│       ├── scheduler/              # Dormant + ETL schedulers
-│       ├── util/ constants/        # Shared utilities and enums
-│       └── resources/
-│           ├── application.yml
-│           ├── db/migration/       # schema.sql, data.sql
-│           └── mongo/init.js       # Mongo seed
-│
-├── frontend/                       # React + TS application
-│   └── src/
-│       ├── assets/  styles/        # Static assets, global CSS
-│       ├── components/             # Reusable UI primitives
-│       │   ├── common/             # Sidebar, Header, StatCard, DataTable, ...
-│       │   ├── dashboard/ tables/ forms/ modals/ charts/ ai/
-│       ├── layouts/                # MainLayout, AuthLayout
-│       ├── pages/                  # 22 module pages
-│       ├── routes/                 # AppRoutes + ProtectedRoute
-│       ├── services/               # Axios client + per-module API services
-│       ├── store/                  # Auth + UI Zustand stores
-│       ├── hooks/ utils/ types/    # Shared logic
-│       └── mock-data/              # Realistic Indian / Bhutan banking data
-│
-├── docker/
-│   └── docker-compose.yml          # PostgreSQL + MongoDB + pgAdmin + Mongo Express
-└── docs/                           # API samples, ER diagrams, role matrix
-```
-
----
-
-## Quick Start
-
-### 1. Prerequisites
-
-- Node.js **18+**
-- Java **17+**
-- Maven **3.9+**
-- Docker Desktop (optional but recommended)
-
-### 2. Bring up databases (Docker)
+## ⚡ Quick Start (3 commands, no Docker required)
 
 ```bash
-cd aml-data-warehouse/docker
-docker compose up -d
+# 1 — Backend  (uses H2 in-memory DB — starts in ~15 seconds)
+cd aml-data-warehouse/backend
+./mvnw spring-boot:run          # Windows: mvnw.cmd spring-boot:run
+
+# 2 — Frontend  (new terminal tab)
+cd aml-data-warehouse/frontend
+npm install && npm run dev
+
+# 3 — Open browser
+http://localhost:5173
 ```
 
-This starts:
+**Login credentials** (all passwords: `Aml@12345`)
 
-| Service        | Port  | Credentials                  |
-| -------------- | ----- | ---------------------------- |
-| PostgreSQL     | 5432  | `aml_user` / `aml_pass`      |
-| MongoDB        | 27017 | `aml_user` / `aml_pass`      |
-| pgAdmin        | 5050  | `admin@aml.local` / `admin`  |
-| Mongo Express  | 8081  | `admin` / `admin`            |
+| Username     | Role                          |
+|--------------|-------------------------------|
+| `analyst`    | AML Analyst                   |
+| `supervisor` | AML Supervisor                |
+| `compliance` | Compliance Officer            |
+| `steward`    | Data Steward                  |
+| `dwadmin`    | Data Warehouse Administrator  |
+| `risk`       | Risk Analyst                  |
+| `auditor`    | Auditor                       |
+| `mgmt`       | Management User               |
+| `sysadmin`   | System Administrator          |
 
-PostgreSQL auto-creates the `aml_dw` database; the schema and seed data are loaded by
-the Spring Boot application on first run from `backend/src/main/resources/db/migration/`.
+---
 
-### 3. Run the backend
+## Prerequisites
+
+| Tool        | Minimum version | Check                   |
+|-------------|-----------------|-------------------------|
+| Java JDK    | 17              | `java -version`         |
+| Maven       | 3.9 (or use `./mvnw`) | `mvn -version`  |
+| Node.js     | 18              | `node -v`               |
+| npm         | 9               | `npm -v`                |
+| Docker      | 24 *(optional)* | `docker -v`             |
+
+---
+
+## Step-by-Step: Run the Backend
 
 ```bash
 cd aml-data-warehouse/backend
-./mvnw spring-boot:run         # or: mvn spring-boot:run
 ```
 
-- API base: `http://localhost:8080/api`
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
-- Default profile uses **H2 in-memory** so you can run without Docker. Switch to
-  PostgreSQL with `--spring.profiles.active=postgres`.
+### Option A — H2 in-memory (default, no Docker needed)
 
-### 4. Run the frontend
+```bash
+./mvnw spring-boot:run
+```
+
+- Uses **H2 in-memory database** — no Postgres or Mongo needed.
+- Schema and seed data load automatically from `src/main/resources/db/migration/`.
+- H2 console: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+  - JDBC URL: `jdbc:h2:mem:amldw`  |  User: `sa`  |  Password: *(blank)*
+- Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+> **First run takes ~30–60 s** to download Maven dependencies. Subsequent starts take ~10 s.
+
+### Option B — PostgreSQL + MongoDB (with Docker)
+
+```bash
+# Start databases
+cd aml-data-warehouse/docker
+docker compose up -d
+
+# Start backend with postgres profile
+cd ../backend
+./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres
+```
+
+---
+
+## Step-by-Step: Run the Frontend
 
 ```bash
 cd aml-data-warehouse/frontend
+
+# Install dependencies (first time only)
 npm install
+
+# Start dev server
 npm run dev
 ```
 
-- App URL: `http://localhost:5173`
-- Login with any of the seeded users (see below).
+Open **[http://localhost:5173](http://localhost:5173)** — the Vite dev server proxies
+all `/api` calls to `http://localhost:8080` automatically.
 
 ---
 
-## Seeded Users (all passwords: `Aml@12345`)
+## Step-by-Step: Build for Production
 
-| Username       | Role                          |
-| -------------- | ----------------------------- |
-| `analyst`      | AML Analyst                   |
-| `supervisor`   | AML Supervisor                |
-| `compliance`   | Compliance Officer            |
-| `steward`      | Data Steward                  |
-| `dwadmin`      | Data Warehouse Administrator  |
-| `risk`         | Risk Analyst                  |
-| `auditor`      | Auditor                       |
-| `mgmt`         | Management User               |
-| `sysadmin`     | System Administrator          |
+```bash
+# Backend — creates a runnable jar
+cd aml-data-warehouse/backend
+./mvnw clean package -DskipTests
+java -jar target/aml-warehouse-backend-1.0.0.jar
+
+# Frontend — creates a static bundle
+cd aml-data-warehouse/frontend
+npm run build
+# Output: aml-data-warehouse/frontend/dist/
+```
 
 ---
 
-## Modules
+## Troubleshooting Login
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `401 Unauthorized` on login | Backend not running | Run `./mvnw spring-boot:run` first |
+| `Failed to fetch` / CORS error | Frontend can't reach backend | Make sure backend is on port **8080** |
+| `IllegalStateException: Role missing` on startup | `data.sql` failed to insert roles | Check backend console for SQL errors; ensure you're on Java 17+ |
+| `JWT signature does not match` | Old token in browser storage | Clear `localStorage` in DevTools → Application → Storage |
+| Blank white screen on frontend | npm install not run | Run `npm install` in `frontend/` folder |
+| Port 8080 already in use | Another process | `lsof -i :8080` (Mac/Linux) or `netstat -ano | findstr 8080` (Windows) |
+
+### Clear browser storage (if you see old token errors)
+
+Open **DevTools → Application → Local Storage → http://localhost:5173** → right-click → **Clear**.
+
+---
+
+## Architecture
+
+```
+aml-data-warehouse/
+├── backend/                        ← Spring Boot 3 (Java 17)
+│   └── src/main/
+│       ├── java/com/bank/amlwarehouse/
+│       │   ├── config/             ← Security, CORS, OpenAPI, MongoConfig
+│       │   ├── controller/         ← 21 REST controllers
+│       │   ├── service/impl/       ← Business logic
+│       │   ├── repository/         ← JPA + Mongo repositories
+│       │   ├── entity/             ← JPA entities + Mongo documents
+│       │   ├── dto/                ← Request/Response DTOs
+│       │   ├── security/           ← JWT filter, UserDetailsService
+│       │   ├── audit/              ← @Audited AOP aspect
+│       │   └── exception/          ← GlobalExceptionHandler
+│       └── resources/
+│           ├── application.yml     ← Main config (h2 / postgres profiles)
+│           └── db/migration/       ← schema.sql + data.sql
+│
+├── frontend/                       ← React 18 + TypeScript + Vite + Tailwind
+│   └── src/
+│       ├── pages/                  ← 22 module pages
+│       ├── components/             ← Reusable UI components
+│       ├── services/               ← Axios API client
+│       ├── store/                  ← Zustand auth store
+│       └── mock-data/              ← Fallback data when backend is offline
+│
+└── docker/
+    └── docker-compose.yml          ← PostgreSQL + MongoDB + pgAdmin + MongoExpress
+```
+
+## Tech Stack
+
+| Layer     | Technology                                                    |
+|-----------|---------------------------------------------------------------|
+| Frontend  | React 18, TypeScript, Vite, Tailwind CSS, React Router, Recharts, Axios, Zustand |
+| Backend   | Java 17, Spring Boot 3, Spring Security, JWT, Spring Data JPA |
+| H2 DB     | H2 in-memory (default for local dev — no install needed)      |
+| PostgreSQL| PostgreSQL 15 (optional, via Docker)                          |
+| MongoDB   | MongoDB 6 (optional, via Docker — AI history only)            |
+
+## Modules (22 screens)
 
 1. Login & Authentication
-2. Dashboard
+2. Dashboard (11 KPI tiles + 5 charts)
 3. Customer 360
 4. Account 360
 5. Transaction Explorer
-6. AML Alerts
+6. AML Alerts (lifecycle: assign → escalate → close → convert to STR)
 7. Positive Alerts
 8. Negative Alerts
-9. STR Generation
+9. STR Generation (maker/checker/approve/file workflow + AI narrative)
 10. CTR Reports
 11. Dormant Account Monitoring
-12. LOS Data Mart (Auto Loan, Mortgage, Credit Card, Personal Loan)
-13. Data Catalogue
-14. AI Query Assistant
+12. LOS Data Mart (Auto Loan / Mortgage / Credit Card / Personal Loan)
+13. Data Catalogue (flat + grouped view, CSV export)
+14. AI Query Assistant (natural language → SQL)
 15. Drag-and-Drop Query Builder
 16. Data Quality Dashboard
-17. Metadata & Lineage Viewer
+17. Metadata & Lineage (SVG graph)
 18. ETL Job Monitor
 19. Reports & Dashboards
 20. Audit Trail
 21. User Access Management
 22. Settings
 
----
+## API Documentation
 
-## Testing the APIs
+Swagger UI is available when the backend is running:
+[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-A full Postman / cURL collection lives in `docs/api-samples.md`.
 Quick smoke test:
-
 ```bash
 # Login
-curl -X POST http://localhost:8080/api/auth/login \
+curl -s -X POST http://localhost:8080/api/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"username":"analyst","password":"Aml@12345"}'
+  -d '{"username":"analyst","password":"Aml@12345"}' | python3 -m json.tool
 
-# Dashboard summary (use the token from login)
-curl http://localhost:8080/api/dashboard/summary \
-  -H 'Authorization: Bearer <TOKEN>'
+# Dashboard summary (replace TOKEN with value from login response)
+curl -s http://localhost:8080/api/dashboard/summary \
+  -H 'Authorization: Bearer TOKEN' | python3 -m json.tool
 ```
 
+## Seeded Data Summary
+
+- **12 customers** (Indian + Bhutanese banking profiles, mix of risk ratings)
+- **15 accounts** (savings, current, credit card)
+- **15 transactions** (cash, NEFT, RTGS, SWIFT, UPI — some flagged high-value / cross-border)
+- **10 alerts** (AML, positive, negative — various statuses)
+- **3 STRs** (draft, submitted, approved)
+- **3 CTRs** (draft, approved)
+- **4 dormant accounts** (one suspicious reactivation)
+- **12 loan applications** (AL, ML, CC, PL)
+- **20 data catalogue entries**
+- **8 ETL jobs** (one in FAILED state for demo)
+- **10 data quality issues**
+- **10 audit trail entries**
+- **9 users** (one per role)
+
 ---
 
-## Security
-
-- JWT bearer tokens (HS256, 8 h expiry, refresh endpoint).
-- Spring Security method-level `@PreAuthorize` for role checks.
-- Field-level masking for PII (PAN, Aadhaar, account number) for non-privileged roles.
-- Audit logger captures user activity, query execution, report download, STR / alert
-  changes, access changes (writes to both `audit_user_activity` and `audit_data_access`).
-- BCrypt password hashing.
-- Configurable session timeout and refresh-token rotation.
-
----
-
-## License
-
-Internal prototype — not for production use without a security review.
+*Internal prototype — not for production use without a security review.*

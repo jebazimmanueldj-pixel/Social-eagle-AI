@@ -4,6 +4,7 @@ spring:
   profiles:
     active: h2
 
+  # ── JPA ─────────────────────────────────────────────────────────────────
   jpa:
     hibernate:
       ddl-auto: none
@@ -12,37 +13,42 @@ spring:
       hibernate:
         format_sql: true
 
+  # ── MongoDB (OPTIONAL – app starts fine without it) ─────────────────────
   data:
     mongodb:
-      uri: mongodb://aml_user:aml_pass@localhost:27017/aml_dw?authSource=admin
+      uri: ${MONGO_URI:mongodb://localhost:27017/aml_dw}
       auto-index-creation: true
 
+  # ── SQL Init ────────────────────────────────────────────────────────────
   sql:
     init:
       mode: always
       schema-locations: classpath:db/migration/schema.sql
       data-locations: classpath:db/migration/data.sql
-      continue-on-error: false
+      # true  → log errors but keep going (safe for idempotent MERGEs)
+      continue-on-error: true
 
+# ── Server ────────────────────────────────────────────────────────────────
 server:
   port: 8080
-  servlet:
-    context-path: /
   error:
     include-message: always
 
+# ── AML platform ──────────────────────────────────────────────────────────
 aml:
   jwt:
-    secret: ZmFrZS1zZWNyZXQta2V5LWZvci1hbWwtZGF0YS13YXJlaG91c2UtcHJvdG90eXBlLW9ubHk=
-    access-token-validity-ms: 28800000   # 8 hours
-    refresh-token-validity-ms: 604800000 # 7 days
+    # 64-char ASCII string → 512-bit key → well above HS256 minimum of 256 bits
+    secret: ${JWT_SECRET:AmlDataWarehouseSecretKey2024!!SuperSecureAndLongEnoughForHS256Algorithm}
+    access-token-validity-ms: 28800000    # 8 hours
+    refresh-token-validity-ms: 604800000  # 7 days
   cors:
-    allowed-origins: http://localhost:5173,http://localhost:3000
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
   audit:
     enabled: true
   pii:
     masking-roles: AML_ANALYST,RISK_ANALYST,AUDITOR
 
+# ── Swagger ───────────────────────────────────────────────────────────────
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -50,13 +56,18 @@ springdoc:
   api-docs:
     path: /v3/api-docs
 
+# ── Logging ───────────────────────────────────────────────────────────────
 logging:
   level:
     root: INFO
     com.bank.amlwarehouse: DEBUG
+    org.springframework.security: WARN
     org.hibernate.SQL: WARN
 
 ---
+# ═══════════════════════════════════════════════════════════
+#  H2 in-memory profile  (default — no Docker needed)
+# ═══════════════════════════════════════════════════════════
 spring:
   config:
     activate:
@@ -70,17 +81,30 @@ spring:
     console:
       enabled: true
       path: /h2-console
+  # Disable Mongo auto-config in H2 profile so app starts without Mongo running
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoConfiguration
 
 ---
+# ═══════════════════════════════════════════════════════════
+#  PostgreSQL profile  (use with Docker Compose)
+# ═══════════════════════════════════════════════════════════
 spring:
   config:
     activate:
       on-profile: postgres
   datasource:
-    url: jdbc:postgresql://localhost:5432/aml_dw
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/aml_dw}
     driver-class-name: org.postgresql.Driver
-    username: aml_user
-    password: aml_pass
+    username: ${DB_USER:aml_user}
+    password: ${DB_PASS:aml_pass}
   sql:
     init:
-      mode: never   # schema is loaded by docker-entrypoint
+      # Schema already loaded by Docker entrypoint — only run data seed
+      mode: always
+      schema-locations: classpath:db/migration/schema.sql
+      data-locations: classpath:db/migration/data.sql
+      continue-on-error: true
